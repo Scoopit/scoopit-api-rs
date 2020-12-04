@@ -1,0 +1,19 @@
+[package]
+name = "scoopit-api"
+version = "0.1.0"
+authors = ["Philippe GASSMANN <philippe.gassmann@scoop.it>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description="Rust client for www.scoop.it REST API"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde={version="1", features=["derive"]}
+reqwest = { version="0.10", features=["rustls", "json"] }
+anyhow="1"
+serde_qs = "0.7"
+
+[dev-dependencies]
+dotenv = "0.15.0"
+tokio = { version="0.2", features = ["rt-core","rt-threaded", "macros"]}
