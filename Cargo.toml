@@ -5,6 +5,7 @@ authors = ["Philippe GASSMANN <philippe.gassmann@scoop.it>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
 description="Rust client for www.scoop.it REST API"
+repository="https://github.com/Scoopit/scoopit-api-rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
