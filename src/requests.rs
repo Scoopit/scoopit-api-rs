@@ -1,4 +1,7 @@
-use std::convert::{TryFrom, TryInto};
+use std::{
+    convert::{TryFrom, TryInto},
+    str::FromStr,
+};
 
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
@@ -191,6 +194,19 @@ pub enum SearchRequestType {
     User,
     Topic,
     Post,
+}
+
+impl FromStr for SearchRequestType {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "user" => Ok(SearchRequestType::User),
+            "topic" => Ok(SearchRequestType::Topic),
+            "post" => Ok(SearchRequestType::Post),
+            other => Err(anyhow::anyhow!("Invalid request type: {}", other)),
+        }
+    }
 }
 
 /// Perform a search.
