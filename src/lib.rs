@@ -12,7 +12,7 @@ use std::{
     convert::TryInto,
     fmt::Debug,
     sync::RwLock,
-    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use reqwest::{header, Url};
@@ -263,7 +263,7 @@ impl TryFrom<AccessTokenResponse> for AccessToken {
     fn try_from(r: AccessTokenResponse) -> Result<Self, Self::Error> {
         let AccessTokenResponse {
             access_token,
-            expires_in,
+            expires_in: _,
             refresh_token,
         } = r;
         let decoded = jsonwebtoken::dangerous_insecure_decode::<Claims>(&access_token)?;
