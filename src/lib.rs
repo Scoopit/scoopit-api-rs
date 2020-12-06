@@ -2,14 +2,17 @@
 //!
 //! The client uses `reqwest` with `rustls` to perform HTTP requests to www.scoop.it API.
 use anyhow::Context;
+use log::debug;
 use oauth::{AccessTokenRequest, AccessTokenResponse};
 pub use requests::*;
 use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
 use std::{
+    convert::TryFrom,
     convert::TryInto,
     fmt::Debug,
     sync::RwLock,
-    time::{Duration, Instant},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
 use reqwest::{header, Url};
@@ -114,12 +117,14 @@ impl ScoopitAPIClient {
             .json::<AccessTokenResponse>()
             .await?;
 
+        debug!("Creating client with access token: {:?}", access_token);
+
         Ok(Self {
             scoopit_api,
             client,
             client_id: client_id.to_string(),
             client_secret: client_secret.to_string(),
-            access_token: RwLock::new(access_token.into()),
+            access_token: RwLock::new(access_token.try_into()?),
         })
     }
 
@@ -128,10 +133,13 @@ impl ScoopitAPIClient {
             let token = self.access_token.read().unwrap();
             match &token.renew {
                 Some(renew) => {
-                    if renew.expired_at > Instant::now() {
+                    let now_timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?;
+                    if now_timestamp.as_secs() < renew.expires_at {
+                        debug!("Access token: {}, no renew needed!", token.access_token);
                         // no renew needed
                         return Ok(());
                     } else {
+                        debug!("Access token: {}, renew needed!", token.access_token);
                         renew.refresh_token.clone()
                     }
                 }
@@ -157,9 +165,11 @@ impl ScoopitAPIClient {
             .json::<AccessTokenResponse>()
             .await?;
 
+        debug!("Got new token: {:?}", new_access_token);
+
         let mut token = self.access_token.write().unwrap();
 
-        *token = new_access_token.into();
+        *token = new_access_token.try_into()?;
 
         Ok(())
     }
@@ -204,13 +214,13 @@ impl ScoopitAPIClient {
 
 /// Renewal data of an access token
 pub struct AccessTokenRenew {
-    expired_at: Instant,
+    expires_at: u64,
     refresh_token: String,
 }
 impl AccessTokenRenew {
-    pub fn new(expired_at: Instant, refresh_token: String) -> Self {
+    pub fn new(expires_at: u64, refresh_token: String) -> Self {
         Self {
-            expired_at,
+            expires_at,
             refresh_token,
         }
     }
@@ -220,6 +230,12 @@ impl AccessTokenRenew {
 pub struct AccessToken {
     access_token: String,
     renew: Option<AccessTokenRenew>,
+}
+
+// we are only interested by the expiration
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Claims {
+    pub exp: Option<u64>,
 }
 
 impl AccessToken {
@@ -241,20 +257,30 @@ impl AccessToken {
     }
 }
 
-impl From<AccessTokenResponse> for AccessToken {
-    fn from(r: AccessTokenResponse) -> Self {
+impl TryFrom<AccessTokenResponse> for AccessToken {
+    type Error = anyhow::Error;
+
+    fn try_from(r: AccessTokenResponse) -> Result<Self, Self::Error> {
         let AccessTokenResponse {
             access_token,
             expires_in,
             refresh_token,
         } = r;
-        Self::with_renew(
+        let decoded = jsonwebtoken::dangerous_insecure_decode::<Claims>(&access_token)?;
+
+        Ok(Self::with_renew(
             access_token,
-            refresh_token.map(|refresh_token| AccessTokenRenew {
-                expired_at: Instant::now() + Duration::from_secs(expires_in),
-                refresh_token,
-            }),
-        )
+            refresh_token
+                .map::<anyhow::Result<AccessTokenRenew>, _>(|refresh_token| {
+                    Ok(AccessTokenRenew {
+                        expires_at: decoded.claims.exp.ok_or(anyhow::anyhow!(
+                            "Refresh token provided but access token does not expires!"
+                        ))?,
+                        refresh_token,
+                    })
+                })
+                .transpose()?,
+        ))
     }
 }
 
