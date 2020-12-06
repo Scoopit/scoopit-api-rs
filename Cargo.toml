@@ -1,6 +1,6 @@
 [package]
 name = "scoopit-api"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Philippe GASSMANN <philippe.gassmann@scoop.it>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
