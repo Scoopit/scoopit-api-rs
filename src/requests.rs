@@ -185,7 +185,7 @@ impl TryFrom<TopicResponse> for Topic {
         }
     }
 }
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub enum SearchRequestType {
     User,
