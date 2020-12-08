@@ -229,7 +229,7 @@ pub struct SearchRequest {
     /// int optional, default to 0 -the page number to return, the first page is 0
     pub page: Option<u32>,
     /// string optional, default to "en" - the language of the content to search into
-    pub lang: Option<u32>,
+    pub lang: Option<String>,
     /// long optional - the id of the topic to search posts into
     pub topic_id: Option<u32>,
     /// bool optional, default to true - returns or not list of tags for each returned topic / post. only for type="topic" or type="post"
