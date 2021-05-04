@@ -1,19 +1,14 @@
 //! # Rust client for www.scoop.it REST API
 //!
 //! The client uses `reqwest` with `rustls` to perform HTTP requests to www.scoop.it API.
+use access_token_store::AccessTokenStore;
 use anyhow::Context;
 use log::debug;
 use oauth::{AccessTokenRequest, AccessTokenResponse};
 pub use requests::*;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use std::{
-    convert::TryFrom,
-    convert::TryInto,
-    fmt::Debug,
-    sync::RwLock,
-    time::{Duration, SystemTime, UNIX_EPOCH},
-};
+use std::{convert::TryFrom, convert::TryInto, fmt::Debug, time::Duration};
 
 use reqwest::{header, Url};
 
@@ -69,9 +64,7 @@ impl ScoopitAPI {
 pub struct ScoopitAPIClient {
     scoopit_api: ScoopitAPI,
     client: reqwest::Client,
-    client_id: String,
-    client_secret: String,
-    access_token: RwLock<AccessToken>,
+    access_token: AccessTokenStore,
 }
 
 impl ScoopitAPIClient {
@@ -120,70 +113,25 @@ impl ScoopitAPIClient {
         debug!("Creating client with access token: {:?}", access_token);
 
         Ok(Self {
+            access_token: AccessTokenStore::new(
+                access_token.try_into()?,
+                scoopit_api.clone(),
+                client.clone(),
+                client_id.to_string(),
+                client_secret.to_string(),
+            ),
             scoopit_api,
             client,
-            client_id: client_id.to_string(),
-            client_secret: client_secret.to_string(),
-            access_token: RwLock::new(access_token.try_into()?),
         })
     }
 
-    async fn renew_token_if_needed(&self) -> anyhow::Result<()> {
-        let refresh_token = {
-            let token = self.access_token.read().unwrap();
-            match &token.renew {
-                Some(renew) => {
-                    let now_timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?;
-                    if now_timestamp.as_secs() < renew.expires_at {
-                        debug!("Access token: {}, no renew needed!", token.access_token);
-                        // no renew needed
-                        return Ok(());
-                    } else {
-                        debug!("Access token: {}, renew needed!", token.access_token);
-                        renew.refresh_token.clone()
-                    }
-                }
-                // no renew needed
-                None => return Ok(()),
-            }
-        };
-        // renew needed: lock lately to avoid having the lock guard being leaked in the future making
-        // the client not Send
-
-        let new_access_token = self
-            .client
-            .post(Url::parse(&self.scoopit_api.access_token_endpoint)?)
-            .form(&AccessTokenRequest {
-                client_id: &self.client_id,
-                client_secret: &self.client_secret,
-                grant_type: "refresh_token",
-                refresh_token: Some(&refresh_token),
-            })
-            .send()
-            .await?
-            .error_for_status()?
-            .json::<AccessTokenResponse>()
-            .await?;
-
-        debug!("Got new token: {:?}", new_access_token);
-
-        let mut token = self.access_token.write().unwrap();
-
-        *token = new_access_token.try_into()?;
-
-        Ok(())
-    }
-
     async fn do_get<T: DeserializeOwned>(&self, url: Url) -> anyhow::Result<T> {
-        self.renew_token_if_needed()
-            .await
-            .context("Cannot refresh access token!")?;
         Ok(self
             .client
             .get(url)
             .header(
                 header::AUTHORIZATION,
-                format!("Bearer {}", self.access_token.read().unwrap().access_token),
+                format!("Bearer {}", self.access_token.get_access_token().await?),
             )
             .send()
             .await?
@@ -283,6 +231,7 @@ impl TryFrom<AccessTokenResponse> for AccessToken {
         ))
     }
 }
+mod access_token_store;
 
 #[cfg(test)]
 mod tests {
