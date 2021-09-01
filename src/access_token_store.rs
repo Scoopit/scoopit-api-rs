@@ -136,7 +136,7 @@ impl AccessTokenStore {
         {
             let mut token = access_token.write().unwrap();
 
-            *token = new_access_token.try_into()?;
+            *token = new_access_token;
         }
         AccessTokenStore::schedule_renewal(renewer, access_token);
 
