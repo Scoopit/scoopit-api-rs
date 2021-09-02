@@ -43,6 +43,28 @@ impl AccessTokenRenewer {
     }
 }
 
+pub async fn authenticate_with_client_credentials(
+    client: &reqwest::Client,
+    scoopit_api: &ScoopitAPI,
+    client_id: &str,
+    client_secret: &str,
+) -> anyhow::Result<AccessToken> {
+    Ok(client
+        .post(Url::parse(&scoopit_api.access_token_endpoint)?)
+        .form(&AccessTokenRequest {
+            client_id: client_id,
+            client_secret: client_secret,
+            grant_type: "client_credentials",
+            refresh_token: None,
+        })
+        .send()
+        .await?
+        .error_for_status()?
+        .json::<AccessTokenResponse>()
+        .await?
+        .try_into()?)
+}
+
 pub struct AccessTokenStore {
     renewer: Arc<AccessTokenRenewer>,
     access_token: Arc<RwLock<AccessToken>>,
@@ -101,8 +123,12 @@ impl AccessTokenStore {
         if let Some(wait_time) = wait_time {
             tokio::time::sleep(wait_time).await;
         }
-        if let Err(e) = AccessTokenStore::renew_token_if_needed(renewer, access_token).await {
+        if let Err(e) =
+            AccessTokenStore::renew_token_if_needed(renewer.clone(), access_token.clone()).await
+        {
             error!("Unable to renew access token! {}", e);
+            tokio::time::sleep(Duration::from_secs(1)).await;
+            AccessTokenStore::schedule_renewal(renewer, access_token);
         }
     }
 

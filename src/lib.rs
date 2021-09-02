@@ -4,7 +4,7 @@
 use access_token_store::AccessTokenStore;
 use anyhow::Context;
 use log::debug;
-use oauth::{AccessTokenRequest, AccessTokenResponse};
+use oauth::AccessTokenResponse;
 pub use requests::*;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
@@ -19,6 +19,7 @@ pub const AUTHORIZATION_ENDPOINT: &'static str = "https://www.scoop.it/oauth/aut
 /// access token exchange endpoint
 pub const ACCESS_TOKEN_ENDPOINT: &'static str = "https://www.scoop.it/oauth2/token";
 
+mod access_token_store;
 mod oauth;
 pub mod requests;
 pub mod types;
@@ -96,25 +97,19 @@ impl ScoopitAPIClient {
             })
             .build()?;
 
-        let access_token = client
-            .post(Url::parse(&scoopit_api.access_token_endpoint)?)
-            .form(&AccessTokenRequest {
-                client_id: client_id,
-                client_secret: client_secret,
-                grant_type: "client_credentials",
-                refresh_token: None,
-            })
-            .send()
-            .await?
-            .error_for_status()?
-            .json::<AccessTokenResponse>()
-            .await?;
+        let access_token = access_token_store::authenticate_with_client_credentials(
+            &client,
+            &scoopit_api,
+            client_id,
+            client_secret,
+        )
+        .await?;
 
         debug!("Creating client with access token: {:?}", access_token);
 
         Ok(Self {
             access_token: AccessTokenStore::new(
-                access_token.try_into()?,
+                access_token,
                 scoopit_api.clone(),
                 client.clone(),
                 client_id.to_string(),
@@ -161,6 +156,7 @@ impl ScoopitAPIClient {
 }
 
 /// Renewal data of an access token
+#[derive(Debug)]
 pub struct AccessTokenRenew {
     expires_at: u64,
     refresh_token: String,
@@ -175,6 +171,7 @@ impl AccessTokenRenew {
 }
 
 /// An access token
+#[derive(Debug)]
 pub struct AccessToken {
     access_token: String,
     renew: Option<AccessTokenRenew>,
@@ -231,7 +228,6 @@ impl TryFrom<AccessTokenResponse> for AccessToken {
         ))
     }
 }
-mod access_token_store;
 
 #[cfg(test)]
 mod tests {
