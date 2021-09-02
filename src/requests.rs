@@ -188,6 +188,7 @@ impl TryFrom<TopicResponse> for Topic {
         }
     }
 }
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub enum SearchRequestType {
@@ -295,5 +296,40 @@ impl TryFrom<SearchResponse> for SearchResults {
             posts,
             total_found,
         })
+    }
+}
+
+/// Test authentication credentials.
+///
+/// https://www.scoop.it/dev/api/1/urls#test
+#[derive(Serialize, Debug, Default)]
+pub struct TestRequest {
+    _dummy: (),
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct TestResponse {
+    connected_user: Option<User>,
+    error: Option<String>,
+}
+
+impl GetRequest for TestRequest {
+    type Response = TestResponse;
+    type Output = Option<User>;
+
+    fn endpoint() -> &'static str {
+        "test"
+    }
+}
+impl TryFrom<TestResponse> for Option<User> {
+    type Error = anyhow::Error;
+
+    fn try_from(value: TestResponse) -> Result<Self, Self::Error> {
+        if let Some(error) = value.error {
+            Err(anyhow::anyhow!("Server returned an error: {}", error))
+        } else {
+            Ok(value.connected_user)
+        }
     }
 }

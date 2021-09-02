@@ -233,6 +233,7 @@ impl TryFrom<AccessTokenResponse> for AccessToken {
 mod tests {
     use crate::{
         GetProfileRequest, GetTopicRequest, ScoopitAPIClient, SearchRequest, SearchRequestType,
+        TestRequest,
     };
 
     async fn get_client() -> ScoopitAPIClient {
@@ -272,6 +273,16 @@ mod tests {
             .await
             .unwrap();
         println!("{:#?}", topic);
+    }
+
+    #[tokio::test]
+    async fn get_test() {
+        let response = get_client()
+            .await
+            .get(TestRequest::default())
+            .await
+            .unwrap();
+        println!("{:#?}", response);
     }
 
     #[tokio::test]
