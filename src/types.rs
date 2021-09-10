@@ -1,7 +1,7 @@
 //! The types returned by the Scoop.it API
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
     pub id: u64,
@@ -17,7 +17,7 @@ pub struct User {
     pub followed_topics: Option<Vec<Topic>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Topic {
     pub id: u64,
@@ -38,13 +38,13 @@ pub struct Topic {
     pub tags: Option<Vec<TopicTag>>,
     pub stats: Option<Stats>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct TopicTag {
     pub tag: String,
     pub post_count: u32,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Stats {
     pub uv: i32,
@@ -52,7 +52,7 @@ pub struct Stats {
     pub v: i32,
     pub vp: i32,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Post {
     pub id: i64,
@@ -88,7 +88,7 @@ pub struct Post {
     pub topic_id: u64,
     pub topic: Option<Box<Topic>>,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SearchResults {
     pub users: Option<Vec<User>>,
     pub topics: Option<Vec<Topic>>,
