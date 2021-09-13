@@ -1,4 +1,6 @@
 //! The types returned by the Scoop.it API
+use std::collections::BTreeSet;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -15,6 +17,7 @@ pub struct User {
     pub large_avatar_url: String,
     pub curated_topics: Option<Vec<Topic>>,
     pub followed_topics: Option<Vec<Topic>>,
+    pub premium_features: Option<BTreeSet<String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
