@@ -24,7 +24,7 @@ impl AccessTokenRenewer {
     async fn renew_token(&self, refresh_token: &str) -> anyhow::Result<AccessToken> {
         let new_access_token = self
             .client
-            .post(Url::parse(&self.scoopit_api.access_token_endpoint)?)
+            .post(self.scoopit_api.access_token_endpoint.clone())
             .form(&AccessTokenRequest {
                 client_id: &self.client_id,
                 client_secret: &self.client_secret,
@@ -50,7 +50,7 @@ pub async fn authenticate_with_client_credentials(
     client_secret: &str,
 ) -> anyhow::Result<AccessToken> {
     Ok(client
-        .post(Url::parse(&scoopit_api.access_token_endpoint)?)
+        .post(scoopit_api.access_token_endpoint.clone())
         .form(&AccessTokenRequest {
             client_id: client_id,
             client_secret: client_secret,

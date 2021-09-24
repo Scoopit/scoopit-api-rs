@@ -12,13 +12,6 @@ use std::{convert::TryFrom, convert::TryInto, fmt::Debug, time::Duration};
 
 use reqwest::{header, Url};
 
-/// default endpoint
-pub const API_ENDPOINT: &'static str = "https://www.scoop.it/api/1/";
-/// authorization endpoint
-pub const AUTHORIZATION_ENDPOINT: &'static str = "https://www.scoop.it/oauth/authorize";
-/// access token exchange endpoint
-pub const ACCESS_TOKEN_ENDPOINT: &'static str = "https://www.scoop.it/oauth2/token";
-
 mod access_token_store;
 mod oauth;
 pub mod requests;
@@ -29,32 +22,24 @@ pub mod types;
 /// Use the `default()` method to get the default endpoints.
 #[derive(Clone, Debug)]
 pub struct ScoopitAPI {
-    endpoint: String,
-    authorization_endpoint: String,
-    access_token_endpoint: String,
+    endpoint: Url,
+    authorization_endpoint: Url,
+    access_token_endpoint: Url,
 }
 
 impl Default for ScoopitAPI {
     fn default() -> Self {
-        Self {
-            endpoint: API_ENDPOINT.to_string(),
-            authorization_endpoint: AUTHORIZATION_ENDPOINT.to_string(),
-            access_token_endpoint: ACCESS_TOKEN_ENDPOINT.to_string(),
-        }
+        Self::custom(Url::parse("https://www.scoop.it").unwrap()).unwrap()
     }
 }
 
 impl ScoopitAPI {
-    pub fn custom(
-        endpoint: String,
-        authorization_endpoint: String,
-        access_token_endpoint: String,
-    ) -> Self {
-        Self {
-            endpoint,
-            authorization_endpoint,
-            access_token_endpoint,
-        }
+    pub fn custom(base_url: Url) -> anyhow::Result<Self> {
+        Ok(Self {
+            endpoint: base_url.join("/api/1/")?,
+            authorization_endpoint: base_url.join("/oauth/authorize")?,
+            access_token_endpoint: base_url.join("/oauth2/token")?,
+        })
     }
 }
 
@@ -78,12 +63,6 @@ impl ScoopitAPIClient {
         client_id: &str,
         client_secret: &str,
     ) -> anyhow::Result<Self> {
-        if !scoopit_api.endpoint.ends_with("/") {
-            return Err(anyhow::anyhow!(
-                "Endpoint must ends with a trailing slash: {}",
-                scoopit_api.endpoint
-            ));
-        }
         let client = reqwest::ClientBuilder::new()
             .connect_timeout(Duration::from_secs(5))
             .timeout(Duration::from_secs(60))
@@ -144,7 +123,7 @@ impl ScoopitAPIClient {
     where
         R: GetRequest + Debug,
     {
-        let mut url = Url::parse(&self.scoopit_api.endpoint)?.join(R::endpoint())?;
+        let mut url = self.scoopit_api.endpoint.join(R::endpoint())?;
         url.set_query(Some(&serde_qs::to_string(&request)?));
         let response: R::Response = self
             .do_get(url)
