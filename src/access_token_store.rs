@@ -6,7 +6,6 @@ use std::{
 
 use anyhow::Context;
 use log::{debug, error};
-use reqwest::Url;
 
 use crate::{
     oauth::{AccessTokenRequest, AccessTokenResponse},
