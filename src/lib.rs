@@ -211,8 +211,8 @@ impl TryFrom<AccessTokenResponse> for AccessToken {
 #[cfg(test)]
 mod tests {
     use crate::{
-        GetProfileRequest, GetTopicRequest, ScoopitAPIClient, SearchRequest, SearchRequestType,
-        TestRequest, TopicOrder,
+        GetProfileRequest, GetTopicOrder, GetTopicRequest, ScoopitAPIClient, SearchRequest,
+        SearchRequestType, TestRequest,
     };
 
     async fn get_client() -> ScoopitAPIClient {
@@ -257,7 +257,7 @@ mod tests {
             .await
             .get(GetTopicRequest {
                 url_name: Some("sports-and-performance-psychology".to_string()),
-                order: Some(TopicOrder::User),
+                order: Some(GetTopicOrder::User),
                 ..Default::default()
             })
             .await
