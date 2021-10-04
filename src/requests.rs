@@ -86,7 +86,7 @@ pub struct GetTopicRequest {
     /// int optional, default to 0 - for this topic, this parameter is ignored if the current user is not the curator of this topic - get a given page of curable posts
     pub curable_page: Option<u32>,
     /// string mandatory if "since" parameter is not specified - sort order of the curated posts, can be "tag" (see below), "search" (filter result on query "q" mandatory - see below), "curationDate", "user" (same order as seen in the scoop.it website)
-    pub order: Option<String>,
+    pub order: Option<TopicOrder>,
     /// string[] mandatory if "order"=="tag"
     pub tag: Option<Vec<String>>,
     ///  string mandatory if "order"=="search" - the query to use to search in the topic
@@ -99,6 +99,17 @@ pub struct GetTopicRequest {
     pub ncomments: Option<u32>,
     /// boolean optional, default to false - if true, the response will include the scheduled posts
     pub show_scheduled: bool,
+}
+#[derive(Serialize, Debug)]
+pub enum TopicOrder {
+    #[serde(rename = "tag")]
+    Tag,
+    #[serde(rename = "search")]
+    Search,
+    #[serde(rename = "curationDate")]
+    CurationDate,
+    #[serde(rename = "user")]
+    User,
 }
 
 impl Default for GetTopicRequest {
