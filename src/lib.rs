@@ -266,6 +266,21 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn get_topic_with_tags() {
+        let topic = get_client()
+            .await
+            .get(GetTopicRequest {
+                url_name: Some("best-of-photojournalism".to_string()),
+                order: Some(GetTopicOrder::Tag),
+                tag: Some(vec!["afghanistan".to_string()]),
+                ..Default::default()
+            })
+            .await
+            .unwrap();
+        println!("{:#?}", topic);
+    }
+
+    #[tokio::test]
     async fn get_test() {
         let response = get_client()
             .await
