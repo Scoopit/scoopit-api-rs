@@ -11,15 +11,16 @@ repository="https://github.com/Scoopit/scoopit-api-rs"
 
 [dependencies]
 serde={version="1", features=["derive"]}
+
 reqwest = { version="0.11", features=["rustls-tls", "json"], default-features=false }
 tokio = {version="^1.5", features=["time","sync","rt"]}
 anyhow="1"
-# Note we are using a very hacked version of serde_qs to allow serializing Vec in form of
-# vec=foo&vec=bar&vec=baz instead of regular serde_qs vec[1]=foo&vec[2]=bar&vec[3]=baz
-serde_qs = {branch="vec_no_index", git="https://github.com/Scoopit/serde_qs.git"}
 log="0.4"
 jsonwebtoken = "7"
+thiserror="1"
+percent-encoding = "2.1"
 
 [dev-dependencies]
 dotenv = "0.15.0"
 tokio = { version="^1.0", features = ["rt","rt-multi-thread", "macros"]}
+serde_derive = "1"

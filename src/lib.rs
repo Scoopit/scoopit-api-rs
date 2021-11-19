@@ -16,6 +16,9 @@ mod access_token_store;
 mod oauth;
 pub mod requests;
 pub mod types;
+// Note we are using a very hacked slimmed&vendored version of serde_qs to allow serializing Vec in form of
+// vec=foo&vec=bar&vec=baz instead of regular serde_qs vec[1]=foo&vec[2]=bar&vec[3]=baz
+mod serde_qs;
 
 /// Scoop.it API endpoints.
 ///
