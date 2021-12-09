@@ -1,7 +1,6 @@
 //! # Rust client for www.scoop.it REST API
 //!
 //! The client uses `reqwest` with `rustls` to perform HTTP requests to www.scoop.it API.
-use access_token_store::AccessTokenStore;
 use anyhow::Context;
 use log::debug;
 use oauth::AccessTokenResponse;
@@ -19,6 +18,8 @@ pub mod types;
 // Note we are using a very hacked slimmed&vendored version of serde_qs to allow serializing Vec in form of
 // vec=foo&vec=bar&vec=baz instead of regular serde_qs vec[1]=foo&vec[2]=bar&vec[3]=baz
 mod serde_qs;
+
+pub use access_token_store::AccessTokenStore;
 
 /// Scoop.it API endpoints.
 ///
@@ -66,18 +67,7 @@ impl ScoopitAPIClient {
         client_id: &str,
         client_secret: &str,
     ) -> anyhow::Result<Self> {
-        let client = reqwest::ClientBuilder::new()
-            .connect_timeout(Duration::from_secs(5))
-            .timeout(Duration::from_secs(60))
-            .default_headers({
-                let mut headers = header::HeaderMap::new();
-                headers.insert(
-                    header::USER_AGENT,
-                    header::HeaderValue::from_static("reqwest (scoopit-api-rs)"),
-                );
-                headers
-            })
-            .build()?;
+        let client = ScoopitAPIClient::create_client()?;
 
         let access_token = access_token_store::authenticate_with_client_credentials(
             &client,
@@ -100,6 +90,32 @@ impl ScoopitAPIClient {
             scoopit_api,
             client,
         })
+    }
+
+    pub fn new(
+        scoopit_api: ScoopitAPI,
+        access_token_store: AccessTokenStore,
+    ) -> anyhow::Result<Self> {
+        Ok(Self {
+            access_token: access_token_store,
+            client: ScoopitAPIClient::create_client()?,
+            scoopit_api,
+        })
+    }
+
+    fn create_client() -> anyhow::Result<reqwest::Client> {
+        Ok(reqwest::ClientBuilder::new()
+            .connect_timeout(Duration::from_secs(5))
+            .timeout(Duration::from_secs(60))
+            .default_headers({
+                let mut headers = header::HeaderMap::new();
+                headers.insert(
+                    header::USER_AGENT,
+                    header::HeaderValue::from_static("reqwest (scoopit-api-rs)"),
+                );
+                headers
+            })
+            .build()?)
     }
 
     async fn do_get<T: DeserializeOwned>(&self, url: Url) -> anyhow::Result<T> {

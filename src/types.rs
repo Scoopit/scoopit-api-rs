@@ -98,3 +98,11 @@ pub struct SearchResults {
     pub posts: Option<Vec<Post>>,
     pub total_found: i32,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct RecipientsList {
+    pub id: i64,
+    pub name: String,
+    pub emails: Vec<String>,
+}

@@ -5,7 +5,7 @@ use std::{
 
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
-use crate::types::{Post, SearchResults, Topic, User};
+use crate::types::{Post, RecipientsList, SearchResults, Topic, User};
 
 /// Get the profile of a user.
 ///
@@ -307,6 +307,35 @@ impl TryFrom<SearchResponse> for SearchResults {
             posts,
             total_found,
         })
+    }
+}
+
+/// Get the list of recipients lists
+///
+/// See https://www.scoop.it/dev/api/1/urls#recipients-list
+///
+#[derive(Serialize, Debug, Default)]
+pub struct GetRecipientsListRequest {
+    _dummy: (),
+}
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct GetRecipientsListResponse {
+    list: Vec<RecipientsList>,
+}
+
+impl GetRequest for GetRecipientsListRequest {
+    type Response = GetRecipientsListResponse;
+    type Output = Vec<RecipientsList>;
+    fn endpoint() -> &'static str {
+        "recipients-list"
+    }
+}
+impl TryFrom<GetRecipientsListResponse> for Vec<RecipientsList> {
+    type Error = anyhow::Error;
+
+    fn try_from(value: GetRecipientsListResponse) -> Result<Self, Self::Error> {
+        Ok(value.list)
     }
 }
 
