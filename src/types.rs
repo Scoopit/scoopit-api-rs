@@ -1,5 +1,5 @@
 //! The types returned by the Scoop.it API
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
 
 use serde::{Deserialize, Serialize};
 
@@ -90,6 +90,8 @@ pub struct Post {
     pub curation_date: i64,
     pub topic_id: u64,
     pub topic: Option<Box<Topic>>,
+    // note that this may change in the future to an opaque json object
+    pub metadata: Option<HashMap<String, String>>,
 }
 #[derive(Debug, Clone)]
 pub struct SearchResults {
