@@ -5,7 +5,10 @@ use std::{
 
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
-use crate::types::{Post, RecipientsList, SearchResults, Topic, User};
+use crate::{
+    serde_qs,
+    types::{Post, RecipientsList, SearchResults, Topic, User},
+};
 
 /// Get the profile of a user.
 ///
@@ -142,6 +145,18 @@ pub trait GetRequest: Serialize {
     type Output;
 
     fn endpoint() -> &'static str;
+}
+
+pub trait PostRequest: GetRequest {
+    /// the content type of the post request, by default `application/x-www-form-urlencoded`
+    fn content_type() -> &'static str {
+        "application/x-www-form-urlencoded; charset=utf-8"
+    }
+
+    /// The body as bytes, by default the type implementing this trait is serialized using serde_qs.
+    fn body(&self) -> anyhow::Result<Vec<u8>> {
+        Ok(serde_qs::to_string(&self)?.into_bytes())
+    }
 }
 
 impl GetRequest for GetTopicRequest {
