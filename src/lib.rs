@@ -180,9 +180,8 @@ impl ScoopitAPIClient {
 
     /// Perform a `POST` request to scoop.it API.
     ///
-    /// The request must immplements the `GetRequest` trait which specifies
-    /// serialization format of the response and conversion method to the actual
-    /// output type.
+    /// The request must immplements the `PostRequest` trait which extends GetRequest trait
+    /// and add the ability to customize the body of the post request.
     pub async fn post<R>(&self, request: R) -> anyhow::Result<R::Output>
     where
         R: PostRequest + Debug,
