@@ -20,19 +20,7 @@ pub mod types;
 // vec=foo&vec=bar&vec=baz instead of regular serde_qs vec[1]=foo&vec[2]=bar&vec[3]=baz
 mod serde_qs;
 
-mod error {
-
-    /// Please do not rely on enum variants yet, the api is not stabilized
-    #[derive(thiserror::Error, Debug)]
-    pub enum Error {
-        #[error("Requested resource not found")]
-        NotFound,
-        #[error("An error occurred: {}", .0)]
-        HttpClient(#[from] reqwest::Error),
-        #[error("An error occurred: {}", .0)]
-        Other(#[from] anyhow::Error),
-    }
-}
+mod error;
 
 pub use access_token_store::AccessTokenStore;
 
@@ -148,11 +136,7 @@ impl ScoopitAPIClient {
             )
             .send()
             .await?
-            .error_for_status()
-            .map_err(|e| match e.status() {
-                Some(status) if status.as_u16() == 404 => error::Error::NotFound,
-                _ => error::Error::from(e),
-            })?
+            .error_for_status()?
             .json()
             .await?)
     }
@@ -162,7 +146,7 @@ impl ScoopitAPIClient {
     /// The request must immplements the `GetRequest` trait which specifies
     /// serialization format of the response and conversion method to the actual
     /// output type.
-    pub async fn get<R>(&self, request: R) -> anyhow::Result<R::Output>
+    pub async fn get<R>(&self, request: R) -> Result<R::Output, error::Error>
     where
         R: GetRequest + Debug,
     {
@@ -174,19 +158,16 @@ impl ScoopitAPIClient {
         url.set_query(Some(
             &serde_qs::to_string(&request).context("Cannot build the url")?,
         ));
-        let response: R::Response = self
-            .do_request(self.client.get(url))
-            .await
-            .with_context(|| format!("Cannot get from api, request: {:?}", request))?;
+        let response: R::Response = self.do_request(self.client.get(url)).await?;
 
-        response.try_into()
+        response.try_into().map_err(error::Error::from)
     }
 
     /// Perform a `POST` request to scoop.it API.
     ///
     /// The request must immplements the `PostRequest` trait which extends GetRequest trait
     /// and add the ability to customize the body of the post request.
-    pub async fn post<R>(&self, request: R) -> anyhow::Result<R::Output>
+    pub async fn post<R>(&self, request: R) -> Result<R::Output, error::Error>
     where
         R: PostRequest + Debug,
     {
@@ -203,28 +184,9 @@ impl ScoopitAPIClient {
                     .header(CONTENT_TYPE, R::content_type())
                     .body(request.body()?),
             )
-            .await
-            .with_context(|| format!("Cannot get from api, request: {:?}", request))?;
+            .await?;
 
-        response.try_into()
-    }
-}
-
-/// Quick check if the result returned by ScoopitAPIClient::get returned a not found error.
-pub fn is_not_found_error<T>(result: &anyhow::Result<T>) -> bool {
-    if let Err(e) = result {
-        match e.downcast_ref::<error::Error>() {
-            Some(api_error) => {
-                if let error::Error::NotFound = api_error {
-                    true
-                } else {
-                    false
-                }
-            }
-            _ => false,
-        }
-    } else {
-        false
+        response.try_into().map_err(error::Error::from)
     }
 }
 
@@ -305,8 +267,8 @@ impl TryFrom<AccessTokenResponse> for AccessToken {
 #[cfg(test)]
 mod tests {
     use crate::{
-        is_not_found_error, GetProfileRequest, GetTopicOrder, GetTopicRequest, LoginRequest,
-        ScoopitAPIClient, SearchRequest, SearchRequestType, TestRequest,
+        GetProfileRequest, GetTopicOrder, GetTopicRequest, ScoopitAPIClient, SearchRequest,
+        SearchRequestType, TestRequest,
     };
 
     async fn get_client() -> ScoopitAPIClient {
@@ -333,18 +295,16 @@ mod tests {
             })
             .await;
 
-        assert!(!is_not_found_error(&user));
-
         println!("{:#?}", user.unwrap());
 
-        assert!(is_not_found_error(
-            &client
-                .get(GetProfileRequest {
-                    short_name: Some("pgassmann-a-profile-that-should-not-exists".to_string()),
-                    ..Default::default()
-                })
-                .await
-        ));
+        assert!(client
+            .get(GetProfileRequest {
+                short_name: Some("pgassmann-a-profile-that-should-not-exists".to_string()),
+                ..Default::default()
+            })
+            .await
+            .unwrap_err()
+            .is_not_found());
     }
 
     #[tokio::test]
@@ -386,14 +346,14 @@ mod tests {
             .unwrap();
         println!("{:#?}", topic);
 
-        assert!(is_not_found_error(
-            &client
-                .get(GetTopicRequest {
-                    url_name: Some("best-of-photojournalism-that-must-not-exists-yolo".to_string()),
-                    ..Default::default()
-                })
-                .await
-        ));
+        assert!(client
+            .get(GetTopicRequest {
+                url_name: Some("best-of-photojournalism-that-must-not-exists-yolo".to_string()),
+                ..Default::default()
+            })
+            .await
+            .unwrap_err()
+            .is_not_found());
     }
 
     #[tokio::test]
