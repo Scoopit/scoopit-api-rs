@@ -60,6 +60,10 @@ impl ScoopitAPI {
             access_token_endpoint: base_url.join("/oauth2/token")?,
         })
     }
+
+    pub fn with_endpoint(self, endpoint: Url) -> Self {
+        Self { endpoint, ..self }
+    }
 }
 
 /// The client for the scoop.it API.
@@ -442,7 +446,7 @@ mod tests {
                 .unwrap()
         );
     }
-/* 
+    /*
     #[tokio::test]
     async fn login() {
         let client = get_client().await;
