@@ -14,7 +14,7 @@ impl Error {
         }
     }
     pub fn is_forbidden(&self) -> bool {
-        if let Inner::NotFound = self.inner {
+        if let Inner::Forbidden = self.inner {
             true
         } else {
             false
