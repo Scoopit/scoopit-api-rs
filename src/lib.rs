@@ -301,12 +301,13 @@ impl TryFrom<AccessTokenResponse> for AccessToken {
 #[cfg(test)]
 mod tests {
     use crate::{
-        is_not_found_error, GetProfileRequest, GetTopicOrder, GetTopicRequest, ScoopitAPIClient,
-        SearchRequest, SearchRequestType, TestRequest,
+        is_not_found_error, GetProfileRequest, GetTopicOrder, GetTopicRequest, LoginRequest,
+        ScoopitAPIClient, SearchRequest, SearchRequestType, TestRequest,
     };
 
     async fn get_client() -> ScoopitAPIClient {
         let _ = dotenv::dotenv();
+        env_logger::init();
         let client_id = std::env::var("SCOOPIT_CLIENT_ID").unwrap();
         let client_secret = std::env::var("SCOOPIT_CLIENT_SECRET").unwrap();
         ScoopitAPIClient::authenticate_with_client_credentials(
@@ -441,4 +442,20 @@ mod tests {
                 .unwrap()
         );
     }
+/* 
+    #[tokio::test]
+    async fn login() {
+        let client = get_client().await;
+
+        let result = client
+            .post(LoginRequest {
+                email: std::env::var("SCOOPIT_TEST_EMAIL").unwrap(),
+                password: std::env::var("SCOOPIT_TEST_PWD").unwrap(),
+            })
+            .await
+            .unwrap();
+
+        println!("{:#?}", result)
+    }
+    */
 }

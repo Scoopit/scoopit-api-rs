@@ -3,6 +3,7 @@ use std::{
     str::FromStr,
 };
 
+use anyhow::anyhow;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use crate::{
@@ -147,7 +148,17 @@ pub trait GetRequest: Serialize {
     fn endpoint() -> &'static str;
 }
 
-pub trait PostRequest: GetRequest {
+/// A `POST` request, by default the body is serialized as `application/x-www-form-urlencoded`.
+pub trait PostRequest: Serialize {
+    /// The type returned by the Scoop.it API.
+    ///
+    /// It must be converible to this trait Output type.
+    type Response: TryInto<Self::Output, Error = anyhow::Error> + DeserializeOwned;
+    /// The type returned by the client
+    type Output;
+
+    fn endpoint() -> &'static str;
+
     /// the content type of the post request, by default `application/x-www-form-urlencoded`
     fn content_type() -> &'static str {
         "application/x-www-form-urlencoded; charset=utf-8"
@@ -385,6 +396,54 @@ impl TryFrom<TestResponse> for Option<User> {
             Err(anyhow::anyhow!("Server returned an error: {}", error))
         } else {
             Ok(value.connected_user)
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct LoginRequest {
+    pub email: String,
+    pub password: String,
+}
+
+impl PostRequest for LoginRequest {
+    type Response = LoginResponse;
+
+    type Output = LoginAccessToken;
+
+    fn endpoint() -> &'static str {
+        "login"
+    }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+pub enum LoginResponse {
+    Ok {
+        #[serde(rename = "accessToken")]
+        access_token: LoginAccessToken,
+    },
+    Err {
+        errors: Vec<String>,
+    },
+}
+
+#[derive(Debug, Deserialize)]
+pub struct LoginAccessToken {
+    pub oauth_token: String,
+    pub oauth_token_secret: String,
+}
+
+impl TryFrom<LoginResponse> for LoginAccessToken {
+    type Error = anyhow::Error;
+
+    fn try_from(value: LoginResponse) -> Result<Self, Self::Error> {
+        match value {
+            LoginResponse::Ok { access_token } => Ok(access_token),
+            LoginResponse::Err { errors } => Err(anyhow!(
+                "Unable to login with errors: {}",
+                errors.join(", ")
+            )),
         }
     }
 }
