@@ -376,19 +376,19 @@ pub struct TestRequest {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct TestResponse {
-    connected_user: Option<User>,
+    connected_user: Option<String>,
     error: Option<String>,
 }
 
 impl GetRequest for TestRequest {
     type Response = TestResponse;
-    type Output = Option<User>;
+    type Output = Option<String>;
 
     fn endpoint() -> &'static str {
         "test"
     }
 }
-impl TryFrom<TestResponse> for Option<User> {
+impl TryFrom<TestResponse> for Option<String> {
     type Error = anyhow::Error;
 
     fn try_from(value: TestResponse) -> Result<Self, Self::Error> {
