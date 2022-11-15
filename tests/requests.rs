@@ -1,6 +1,7 @@
+use reqwest::Method;
 use scoopit_api::{
-    serde_qs, types::SourceTypeData, BodyRequest, CreateSuggestionEngineSourceRequest,
-    DeleteSuggestionEngineSourceRequest, GetSuggestionEngineSourcesRequest,
+    serde_qs, types::SourceTypeData, CreateSuggestionEngineSourceRequest,
+    DeleteSuggestionEngineSourceRequest, GetSuggestionEngineSourcesRequest, UpdateRequest,
     UpdateSuggestionEngineSourceRequest,
 };
 
@@ -20,6 +21,7 @@ fn test_source_requests_serialization() {
     };
     assert_eq!("se/123/sources/456", delete_source.endpoint());
     assert_eq!("", String::from_utf8_lossy(&delete_source.body().unwrap()));
+    assert_eq!(Method::DELETE, delete_source.method());
 
     let update_source = UpdateSuggestionEngineSourceRequest {
         suggestion_engine_id: 123,
@@ -28,6 +30,7 @@ fn test_source_requests_serialization() {
     };
     assert_eq!("se/123/sources/456", update_source.endpoint());
     assert_eq!("", String::from_utf8_lossy(&update_source.body().unwrap()));
+    assert_eq!(Method::POST, update_source.method());
 
     let update_source = UpdateSuggestionEngineSourceRequest {
         suggestion_engine_id: 123,
@@ -52,4 +55,5 @@ fn test_source_requests_serialization() {
         "type=twitter_follow_user&twitterUser=bluxte",
         String::from_utf8_lossy(&create_twitter_source.body().unwrap())
     );
+    assert_eq!(Method::PUT, create_twitter_source.method());
 }

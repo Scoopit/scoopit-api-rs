@@ -10,7 +10,7 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::{convert::TryFrom, convert::TryInto, fmt::Debug, time::Duration};
 
-use reqwest::{header, Method, RequestBuilder, Url};
+use reqwest::{header, RequestBuilder, Url};
 
 // reexport crates
 pub use reqwest;
@@ -167,46 +167,12 @@ impl ScoopitAPIClient {
         response.try_into().map_err(error::Error::from)
     }
 
-    /// Perform a `POST` request to scoop.it API.
+    /// Perform a request with a triggers an update (or an action) to scoop.it API.
     ///
-    /// The request must implements the `BodyRequest` trait.
-    pub async fn post<R>(&self, request: R) -> Result<R::Output, error::Error>
+    /// The request must implements the `UpdateRequest` trait.
+    pub async fn body_request<R>(&self, request: R) -> Result<R::Output, error::Error>
     where
-        R: BodyRequest + Debug,
-    {
-        self.body_request(request, Method::POST).await
-    }
-
-    /// Perform a `PUT` request to scoop.it API.
-    ///
-    /// The request must implements the `BodyRequest` trait.
-    pub async fn put<R>(&self, request: R) -> Result<R::Output, error::Error>
-    where
-        R: BodyRequest + Debug,
-    {
-        self.body_request(request, Method::PUT).await
-    }
-
-    /// Perform a `DELETE` request to scoop.it API.
-    ///
-    /// The request must implements the `BodyRequest` trait.
-    pub async fn delete<R>(&self, request: R) -> Result<R::Output, error::Error>
-    where
-        R: BodyRequest + Debug,
-    {
-        self.body_request(request, Method::DELETE).await
-    }
-
-    /// Perform a request with a body to scoop.it API.
-    ///
-    /// The request must implements the `BodyRequest` trait.
-    pub async fn body_request<R>(
-        &self,
-        request: R,
-        method: Method,
-    ) -> Result<R::Output, error::Error>
-    where
-        R: BodyRequest + Debug,
+        R: UpdateRequest + Debug,
     {
         let url = self
             .scoopit_api
@@ -217,7 +183,7 @@ impl ScoopitAPIClient {
         let response: R::Response = self
             .do_request(
                 self.client
-                    .request(method, url)
+                    .request(request.method(), url)
                     .header(CONTENT_TYPE, R::content_type())
                     .body(request.body()?),
             )

@@ -5,6 +5,7 @@ use std::{
 };
 
 use anyhow::anyhow;
+use reqwest::Method;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use crate::{
@@ -151,8 +152,9 @@ pub trait GetRequest: Serialize {
     fn endpoint(&self) -> Cow<'static, str>;
 }
 
-/// A request with a body, by default the body is serialized as `application/x-www-form-urlencoded`.
-pub trait BodyRequest: Serialize {
+/// A request that does an update, by default the body is serialized as
+/// `application/x-www-form-urlencoded` and the method is `POST`
+pub trait UpdateRequest: Serialize {
     /// The type returned by the Scoop.it API.
     ///
     /// It must be convertible to this trait Output type.
@@ -170,6 +172,10 @@ pub trait BodyRequest: Serialize {
     /// The body as bytes, by default the type implementing this trait is serialized using serde_qs.
     fn body(&self) -> anyhow::Result<Vec<u8>> {
         Ok(serde_qs::to_string(&self)?.into_bytes())
+    }
+
+    fn method(&self) -> Method {
+        Method::POST
     }
 }
 
@@ -410,7 +416,7 @@ pub struct LoginRequest {
     pub password: String,
 }
 
-impl BodyRequest for LoginRequest {
+impl UpdateRequest for LoginRequest {
     type Response = LoginResponse;
 
     type Output = LoginAccessToken;
@@ -574,7 +580,7 @@ pub struct DeleteSuggestionEngineSourceRequest {
     pub source_id: i64,
 }
 
-impl BodyRequest for DeleteSuggestionEngineSourceRequest {
+impl UpdateRequest for DeleteSuggestionEngineSourceRequest {
     type Response = EmptyUpdateResponse;
 
     type Output = ();
@@ -585,6 +591,10 @@ impl BodyRequest for DeleteSuggestionEngineSourceRequest {
             self.suggestion_engine_id, self.source_id
         )
         .into()
+    }
+
+    fn method(&self) -> Method {
+        Method::DELETE
     }
 }
 
@@ -600,7 +610,7 @@ pub struct UpdateSuggestionEngineSourceRequest {
     pub name: Option<String>,
 }
 
-impl BodyRequest for UpdateSuggestionEngineSourceRequest {
+impl UpdateRequest for UpdateSuggestionEngineSourceRequest {
     type Response = EmptyUpdateResponse;
 
     type Output = ();
@@ -632,13 +642,17 @@ pub enum CreateSuggestionEngineSourceResponse {
     Ok { source: Source },
     Err { error: String },
 }
-impl BodyRequest for CreateSuggestionEngineSourceRequest {
+impl UpdateRequest for CreateSuggestionEngineSourceRequest {
     type Response = CreateSuggestionEngineSourceResponse;
 
     type Output = Source;
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!("se/{}/sources", self.suggestion_engine_id).into()
+    }
+
+    fn method(&self) -> Method {
+        Method::PUT
     }
 }
 impl TryFrom<CreateSuggestionEngineSourceResponse> for Source {
