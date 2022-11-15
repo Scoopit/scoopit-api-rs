@@ -170,7 +170,7 @@ impl ScoopitAPIClient {
     /// Perform a request with a triggers an update (or an action) to scoop.it API.
     ///
     /// The request must implements the `UpdateRequest` trait.
-    pub async fn body_request<R>(&self, request: R) -> Result<R::Output, error::Error>
+    pub async fn update<R>(&self, request: R) -> Result<R::Output, error::Error>
     where
         R: UpdateRequest + Debug,
     {
