@@ -1,0 +1,163 @@
+{
+    "suggestion_engines": [
+        {
+            "maxSuggestionAge": 30,
+            "includedDomains": [],
+            "containsAnyKeyword": [],
+            "containsAllKeyword": [],
+            "sorter": "relevance",
+            "doesNotContainKeywords": [],
+            "keywords": [],
+            "name": "Research Content",
+            "excludedDomains": [],
+            "id": 1234,
+            "type": "research_content",
+            "saved_searches": [
+                {
+                    "name": "Présidents US (présent et passés)",
+                    "id": 23004
+                },
+                {
+                    "name": "Présidents français (présent et passé)",
+                    "id": 23005
+                },
+                {
+                    "name": "Recherche par défaut",
+                    "id": 23006
+                },
+                {
+                    "name": "RSS le monde + pakistan",
+                    "id": 53001
+                },
+                {
+                    "name": "Search #1",
+                    "id": 54001
+                },
+                {
+                    "name": "Twitter POTUS",
+                    "id": 55001
+                },
+                {
+                    "name": "blog.scoop.it frontpage",
+                    "id": 56001
+                },
+                {
+                    "name": "Credit patate",
+                    "id": 56002
+                },
+                {
+                    "name": "dwh lequipe",
+                    "id": 57001
+                }
+            ]
+        },
+        {
+            "maxSuggestionAge": -1,
+            "includedDomains": [],
+            "containsAnyKeyword": [],
+            "containsAllKeyword": [],
+            "sorter": "freshness",
+            "doesNotContainKeywords": [],
+            "keywords": [],
+            "name": "Company Feed Reader",
+            "excludedDomains": [],
+            "id": 654,
+            "type": "content_monitoring",
+            "saved_searches": [
+                {
+                    "name": "Filter #1",
+                    "id": 123
+                }
+            ]
+        },
+        {
+            "maxSuggestionAge": 30,
+            "includedDomains": [],
+            "containsAnyKeyword": [],
+            "containsAllKeyword": [],
+            "sorter": "relevance",
+            "doesNotContainKeywords": [],
+            "keywords": [],
+            "name": "Company Research Content",
+            "excludedDomains": [],
+            "id": 163001,
+            "type": "research_content",
+            "saved_searches": [
+                {
+                    "name": "Macron",
+                    "id": 231321001
+                },
+                {
+                    "name": "poutine",
+                    "id": 6465132
+                },
+                {
+                    "name": "guerre ukraine",
+                    "id": 98521313
+                },
+                {
+                    "name": "Recherche par défaut",
+                    "id": 5451
+                }
+            ]
+        },
+        {
+            "maxSuggestionAge": 60,
+            "includedDomains": [],
+            "containsAnyKeyword": [],
+            "containsAllKeyword": [],
+            "sorter": "relevance",
+            "doesNotContainKeywords": [],
+            "keywords": [
+                "Keyword(111004)"
+            ],
+            "name": "Macron",
+            "excludedDomains": [],
+            "id": 8784651,
+            "type": "topic"
+        },
+        {
+            "maxSuggestionAge": 60,
+            "includedDomains": [],
+            "containsAnyKeyword": [],
+            "containsAllKeyword": [],
+            "sorter": "relevance",
+            "doesNotContainKeywords": [],
+            "keywords": [],
+            "name": "vide",
+            "excludedDomains": [],
+            "id": 96582,
+            "type": "topic"
+        },
+        {
+            "maxSuggestionAge": 60,
+            "includedDomains": [],
+            "containsAnyKeyword": [],
+            "containsAllKeyword": [],
+            "sorter": "relevance",
+            "doesNotContainKeywords": [],
+            "keywords": [],
+            "name": "Presse",
+            "excludedDomains": [],
+            "id": 15654,
+            "type": "topic"
+        },
+        {
+            "maxSuggestionAge": 60,
+            "includedDomains": [],
+            "containsAnyKeyword": [],
+            "containsAllKeyword": [],
+            "sorter": "relevance",
+            "doesNotContainKeywords": [],
+            "keywords": [
+                "Keyword(131001)"
+            ],
+            "name": "Cyclisme",
+            "excludedDomains": [],
+            "id": 8455622321,
+            "type": "topic"
+        }
+    ],
+    "success": true,
+    "serverTime": 1668452788504
+}

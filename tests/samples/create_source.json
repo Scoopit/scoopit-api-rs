@@ -1,0 +1,13 @@
+{
+    "success": true,
+    "serverTime": 1668438293664,
+    "source": {
+        "name": "Le monde RSS.!! ",
+        "description": "Le Monde.fr - 1er site d’information. Les articles du journal et toute l’actualité en continu : International, France, Société, Economie, Culture, Environnement, Blogs ...",
+        "id": 13456,
+        "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_RSSSource.png",
+        "type": "rss",
+        "url": "https://www.lemonde.fr/rss/une.xml",
+        "rssUrl": "https://www.lemonde.fr/rss/une.xml"
+    }
+}

@@ -10,7 +10,11 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::{convert::TryFrom, convert::TryInto, fmt::Debug, time::Duration};
 
-use reqwest::{header, RequestBuilder, Url};
+use reqwest::{header, Method, RequestBuilder, Url};
+
+// reexport crates
+pub use reqwest;
+pub use url;
 
 mod access_token_store;
 mod oauth;
@@ -18,7 +22,7 @@ pub mod requests;
 pub mod types;
 // Note we are using a very hacked slimmed&vendored version of serde_qs to allow serializing Vec in form of
 // vec=foo&vec=bar&vec=baz instead of regular serde_qs vec[1]=foo&vec[2]=bar&vec[3]=baz
-mod serde_qs;
+pub mod serde_qs;
 
 mod error;
 
@@ -153,7 +157,7 @@ impl ScoopitAPIClient {
         let mut url = self
             .scoopit_api
             .endpoint
-            .join(R::endpoint())
+            .join(request.endpoint().as_ref())
             .context("Cannot build the url")?;
         url.set_query(Some(
             &serde_qs::to_string(&request).context("Cannot build the url")?,
@@ -165,22 +169,55 @@ impl ScoopitAPIClient {
 
     /// Perform a `POST` request to scoop.it API.
     ///
-    /// The request must immplements the `PostRequest` trait which extends GetRequest trait
-    /// and add the ability to customize the body of the post request.
+    /// The request must implements the `BodyRequest` trait.
     pub async fn post<R>(&self, request: R) -> Result<R::Output, error::Error>
     where
-        R: PostRequest + Debug,
+        R: BodyRequest + Debug,
+    {
+        self.body_request(request, Method::POST).await
+    }
+
+    /// Perform a `PUT` request to scoop.it API.
+    ///
+    /// The request must implements the `BodyRequest` trait.
+    pub async fn put<R>(&self, request: R) -> Result<R::Output, error::Error>
+    where
+        R: BodyRequest + Debug,
+    {
+        self.body_request(request, Method::PUT).await
+    }
+
+    /// Perform a `DELETE` request to scoop.it API.
+    ///
+    /// The request must implements the `BodyRequest` trait.
+    pub async fn delete<R>(&self, request: R) -> Result<R::Output, error::Error>
+    where
+        R: BodyRequest + Debug,
+    {
+        self.body_request(request, Method::DELETE).await
+    }
+
+    /// Perform a request with a body to scoop.it API.
+    ///
+    /// The request must implements the `BodyRequest` trait.
+    pub async fn body_request<R>(
+        &self,
+        request: R,
+        method: Method,
+    ) -> Result<R::Output, error::Error>
+    where
+        R: BodyRequest + Debug,
     {
         let url = self
             .scoopit_api
             .endpoint
-            .join(R::endpoint())
+            .join(request.endpoint().as_ref())
             .context("Cannot build the url")?;
 
         let response: R::Response = self
             .do_request(
                 self.client
-                    .post(url)
+                    .request(method, url)
                     .header(CONTENT_TYPE, R::content_type())
                     .body(request.body()?),
             )

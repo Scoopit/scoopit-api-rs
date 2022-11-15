@@ -1,4 +1,5 @@
 use std::{
+    borrow::Cow,
     convert::{TryFrom, TryInto},
     str::FromStr,
 };
@@ -8,7 +9,9 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use crate::{
     serde_qs,
-    types::{Post, RecipientsList, SearchResults, Topic, User},
+    types::{
+        Post, RecipientsList, SearchResults, Source, SourceTypeData, SuggestionEngine, Topic, User,
+    },
 };
 
 /// Get the profile of a user.
@@ -145,19 +148,19 @@ pub trait GetRequest: Serialize {
     /// The type returned by the client
     type Output;
 
-    fn endpoint() -> &'static str;
+    fn endpoint(&self) -> Cow<'static, str>;
 }
 
-/// A `POST` request, by default the body is serialized as `application/x-www-form-urlencoded`.
-pub trait PostRequest: Serialize {
+/// A request with a body, by default the body is serialized as `application/x-www-form-urlencoded`.
+pub trait BodyRequest: Serialize {
     /// The type returned by the Scoop.it API.
     ///
-    /// It must be converible to this trait Output type.
+    /// It must be convertible to this trait Output type.
     type Response: TryInto<Self::Output, Error = anyhow::Error> + DeserializeOwned;
     /// The type returned by the client
     type Output;
 
-    fn endpoint() -> &'static str;
+    fn endpoint(&self) -> Cow<'static, str>;
 
     /// the content type of the post request, by default `application/x-www-form-urlencoded`
     fn content_type() -> &'static str {
@@ -174,16 +177,16 @@ impl GetRequest for GetTopicRequest {
     type Response = TopicResponse;
     type Output = Topic;
 
-    fn endpoint() -> &'static str {
-        "topic"
+    fn endpoint(&self) -> Cow<'static, str> {
+        "topic".into()
     }
 }
 impl GetRequest for GetProfileRequest {
     type Response = UserResponse;
     type Output = User;
 
-    fn endpoint() -> &'static str {
-        "profile"
+    fn endpoint(&self) -> Cow<'static, str> {
+        "profile".into()
     }
 }
 
@@ -312,8 +315,8 @@ impl GetRequest for SearchRequest {
 
     type Output = SearchResults;
 
-    fn endpoint() -> &'static str {
-        "search"
+    fn endpoint(&self) -> Cow<'static, str> {
+        "search".into()
     }
 }
 
@@ -353,8 +356,9 @@ pub struct GetRecipientsListResponse {
 impl GetRequest for GetRecipientsListRequest {
     type Response = GetRecipientsListResponse;
     type Output = Vec<RecipientsList>;
-    fn endpoint() -> &'static str {
-        "recipients-list"
+
+    fn endpoint(&self) -> Cow<'static, str> {
+        "recipients-list".into()
     }
 }
 impl TryFrom<GetRecipientsListResponse> for Vec<RecipientsList> {
@@ -384,8 +388,8 @@ impl GetRequest for TestRequest {
     type Response = TestResponse;
     type Output = Option<String>;
 
-    fn endpoint() -> &'static str {
-        "test"
+    fn endpoint(&self) -> Cow<'static, str> {
+        "test".into()
     }
 }
 impl TryFrom<TestResponse> for Option<String> {
@@ -406,13 +410,13 @@ pub struct LoginRequest {
     pub password: String,
 }
 
-impl PostRequest for LoginRequest {
+impl BodyRequest for LoginRequest {
     type Response = LoginResponse;
 
     type Output = LoginAccessToken;
 
-    fn endpoint() -> &'static str {
-        "login"
+    fn endpoint(&self) -> Cow<'static, str> {
+        "login".into()
     }
 }
 
@@ -444,6 +448,208 @@ impl TryFrom<LoginResponse> for LoginAccessToken {
                 "Unable to login with errors: {}",
                 errors.join(", ")
             )),
+        }
+    }
+}
+/// Get the list of available suggestion engines
+///
+/// https://www.scoop.it/dev/api/1/urls#se
+#[derive(Default, Serialize)]
+pub struct GetSuggestionEnginesRequest {
+    _dummy: (),
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+pub enum GetSuggestionEnginesResponse {
+    Ok {
+        suggestion_engines: Vec<SuggestionEngine>,
+    },
+    Err {
+        error: String,
+    },
+}
+
+impl GetRequest for GetSuggestionEnginesRequest {
+    type Response = GetSuggestionEnginesResponse;
+
+    type Output = Vec<SuggestionEngine>;
+
+    fn endpoint(&self) -> Cow<'static, str> {
+        "se".into()
+    }
+}
+
+impl TryFrom<GetSuggestionEnginesResponse> for Vec<SuggestionEngine> {
+    type Error = anyhow::Error;
+
+    fn try_from(value: GetSuggestionEnginesResponse) -> Result<Self, Self::Error> {
+        match value {
+            GetSuggestionEnginesResponse::Ok { suggestion_engines } => Ok(suggestion_engines),
+            GetSuggestionEnginesResponse::Err { error } => {
+                Err(anyhow!("Server returned an error: {error}"))
+            }
+        }
+    }
+}
+
+/// Get manual user sources of a suggestion engine.
+///
+/// https://www.scoop.it/dev/api/1/urls#se_sources
+#[derive(Debug, Serialize)]
+pub struct GetSuggestionEngineSourcesRequest {
+    #[serde(skip)]
+    pub suggestion_engine_id: i64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+pub enum GetSuggestionEngineSourcesResponse {
+    Ok { sources: Vec<Source> },
+    Err { error: String },
+}
+
+impl GetRequest for GetSuggestionEngineSourcesRequest {
+    type Response = GetSuggestionEngineSourcesResponse;
+
+    type Output = Vec<Source>;
+
+    fn endpoint(&self) -> Cow<'static, str> {
+        format!("se/{}/sources", self.suggestion_engine_id).into()
+    }
+}
+
+impl TryFrom<GetSuggestionEngineSourcesResponse> for Vec<Source> {
+    type Error = anyhow::Error;
+
+    fn try_from(value: GetSuggestionEngineSourcesResponse) -> Result<Self, Self::Error> {
+        match value {
+            GetSuggestionEngineSourcesResponse::Ok { sources } => Ok(sources),
+            GetSuggestionEngineSourcesResponse::Err { error } => {
+                Err(anyhow!("Server returned an error: {error}"))
+            }
+        }
+    }
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(untagged)]
+pub enum EmptyUpdateResponse {
+    Err { error: String },
+    Ok {},
+}
+
+impl EmptyUpdateResponse {
+    pub fn is_ok(&self) -> bool {
+        if let EmptyUpdateResponse::Ok {} = &self {
+            true
+        } else {
+            false
+        }
+    }
+    pub fn is_err(&self) -> bool {
+        !self.is_ok()
+    }
+}
+
+impl TryFrom<EmptyUpdateResponse> for () {
+    type Error = anyhow::Error;
+
+    fn try_from(value: EmptyUpdateResponse) -> Result<Self, Self::Error> {
+        match value {
+            EmptyUpdateResponse::Err { error } => Err(anyhow!("Server returned an error: {error}")),
+            EmptyUpdateResponse::Ok {} => Ok(()),
+        }
+    }
+}
+
+/// Delete a manually source from a suggestion engine
+///
+/// https://www.scoop.it/dev/api/1/urls#se_sources_id
+#[derive(Serialize, Debug)]
+pub struct DeleteSuggestionEngineSourceRequest {
+    #[serde(skip)]
+    pub suggestion_engine_id: i64,
+    #[serde(skip)]
+    pub source_id: i64,
+}
+
+impl BodyRequest for DeleteSuggestionEngineSourceRequest {
+    type Response = EmptyUpdateResponse;
+
+    type Output = ();
+
+    fn endpoint(&self) -> Cow<'static, str> {
+        format!(
+            "se/{}/sources/{}",
+            self.suggestion_engine_id, self.source_id
+        )
+        .into()
+    }
+}
+
+/// Update a manually source from a suggestion engine
+///
+/// https://www.scoop.it/dev/api/1/urls#se_sources_id
+#[derive(Serialize, Debug)]
+pub struct UpdateSuggestionEngineSourceRequest {
+    #[serde(skip)]
+    pub suggestion_engine_id: i64,
+    #[serde(skip)]
+    pub source_id: i64,
+    pub name: Option<String>,
+}
+
+impl BodyRequest for UpdateSuggestionEngineSourceRequest {
+    type Response = EmptyUpdateResponse;
+
+    type Output = ();
+
+    fn endpoint(&self) -> Cow<'static, str> {
+        format!(
+            "se/{}/sources/{}",
+            self.suggestion_engine_id, self.source_id
+        )
+        .into()
+    }
+}
+
+/// Create a suggestion engine source
+///
+/// https://www.scoop.it/dev/api/1/urls#se_sources_id
+#[derive(Serialize, Debug)]
+pub struct CreateSuggestionEngineSourceRequest {
+    #[serde(skip)]
+    pub suggestion_engine_id: i64,
+    pub name: Option<String>,
+    #[serde(flatten)]
+    pub source_data: SourceTypeData,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+pub enum CreateSuggestionEngineSourceResponse {
+    Ok { source: Source },
+    Err { error: String },
+}
+impl BodyRequest for CreateSuggestionEngineSourceRequest {
+    type Response = CreateSuggestionEngineSourceResponse;
+
+    type Output = Source;
+
+    fn endpoint(&self) -> Cow<'static, str> {
+        format!("se/{}/sources", self.suggestion_engine_id).into()
+    }
+}
+impl TryFrom<CreateSuggestionEngineSourceResponse> for Source {
+    type Error = anyhow::Error;
+
+    fn try_from(value: CreateSuggestionEngineSourceResponse) -> Result<Self, Self::Error> {
+        match value {
+            CreateSuggestionEngineSourceResponse::Ok { source } => Ok(source),
+            CreateSuggestionEngineSourceResponse::Err { error } => {
+                Err(anyhow!("Server returned an error: {error}"))
+            }
         }
     }
 }

@@ -1,0 +1,9 @@
+{
+    "twitterUser": "q",
+    "name": "sfmkjselfkdjlkfjs",
+    "description": "Tweets de @q",
+    "id": 2531028,
+    "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+    "type": "twitter_follow_user",
+    "url": "http://twitter.com/q"
+}

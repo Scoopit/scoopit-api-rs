@@ -2,6 +2,7 @@
 use std::collections::{BTreeSet, HashMap};
 
 use serde::{Deserialize, Serialize};
+use url::Url;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -107,4 +108,58 @@ pub struct RecipientsList {
     pub id: i64,
     pub name: String,
     pub emails: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[serde(rename_all = "snake_case")]
+pub enum SuggestionEngineType {
+    ResearchContent,
+    ContentMonitoring,
+    Topic,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct SuggestionEngine {
+    pub id: i64,
+    pub r#type: SuggestionEngineType,
+    pub name: String,
+    pub saved_searches: Option<Vec<SuggestionEngineSavedSearch>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct SuggestionEngineSavedSearch {
+    id: i64,
+    name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "snake_case", tag = "type")]
+pub enum SourceTypeData {
+    #[serde(rename_all = "camelCase")]
+    AdvancedSearch { query: String },
+    #[serde(rename_all = "camelCase")]
+    Webpage { webpage_url: Url },
+    #[serde(rename_all = "camelCase")]
+    Rss { rss_url: Url },
+    #[serde(rename_all = "camelCase")]
+    TwitterSearch { query: String },
+    #[serde(rename_all = "camelCase")]
+    TwitterList {
+        twitter_list_name: String,
+        twitter_list_owner: String,
+    },
+    #[serde(rename_all = "camelCase")]
+    TwitterFollowUser { twitter_user: String },
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Source {
+    pub id: i64,
+    pub name: String,
+    pub description: String,
+    pub icon_url: Url,
+    pub url: Option<Url>,
+    #[serde(flatten)]
+    pub source_type_data: SourceTypeData,
 }

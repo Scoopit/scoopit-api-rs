@@ -1,0 +1,306 @@
+{
+    "sources": [
+        {
+            "twitterUser": "q",
+            "name": "sfmkjselfkdjlkfjs",
+            "description": "Tweets de @q",
+            "id": 2531028,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/q"
+        },
+        {
+            "query": "rss:https://www.lemonde.fr/rss/une.xml AND ukraine",
+            "name": "Recherche avancée : rss:https://www.lemonde.fr/rss/une.xml AND ukraine",
+            "description": "Recherche avancée : rss:https://www.lemonde.fr/rss/une.xml AND ukraine",
+            "id": 2544001,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_AdvancedSearchSource.png",
+            "type": "advanced_search"
+        },
+        {
+            "twitterUser": "d",
+            "name": "Tweets de @d",
+            "description": "Tweets de @d",
+            "id": 2531012,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/d"
+        },
+        {
+            "name": "La dépêche - Recherche \"crédit agricole\"",
+            "description": "Liens de https://www.ladepeche.fr/recherche?q=cr%C3%A9dit+agricole&type=&where=&year=2022&month=&day=",
+            "id": 2541006,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_FrontpageSource.png",
+            "type": "webpage",
+            "webpageUrl": "https://www.ladepeche.fr/recherche?q=cr%C3%A9dit+agricole&type=&where=&year=2022&month=&day="
+        },
+        {
+            "twitterUser": "pgassmann",
+            "name": "Tweets de @pgassmann",
+            "description": "Tweets de @pgassmann",
+            "id": 2149001,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/pgassmann"
+        },
+        {
+            "name": "Actualités et infos de Rodez et sa région - À la une",
+            "description": "Toute l’actualité de l'Aveyron en direct, photos et vidéos avec Centre Presse Aveyron. Retrouvez toutes les informations locales : faits divers, politique, sports, économie, loisirs…",
+            "id": 2527827,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_RSSSource.png",
+            "type": "rss",
+            "url": "https://www.centrepresseaveyron.fr/",
+            "rssUrl": "https://www.centrepresseaveyron.fr/rss.xml"
+        },
+        {
+            "twitterUser": "bscule",
+            "name": "Tweets de @bscule",
+            "description": "Tweets de @bscule",
+            "id": 2531003,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/bscule"
+        },
+        {
+            "twitterUser": "bascule",
+            "name": "Tweets de @bascule",
+            "description": "Tweets de @bascule",
+            "id": 2501024,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/bascule"
+        },
+        {
+            "twitterUser": "prout",
+            "name": "@prout's tweets 2",
+            "description": "Tweets de @prout",
+            "id": 2531005,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/prout"
+        },
+        {
+            "twitterUser": "pwet",
+            "name": "Tweets de @pwet",
+            "description": "Tweets de @pwet",
+            "id": 2531006,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/pwet"
+        },
+        {
+            "twitterUser": "coucou",
+            "name": "Tweets de @coucou",
+            "description": "Tweets de @coucou",
+            "id": 2531007,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/coucou"
+        },
+        {
+            "twitterUser": "elon",
+            "name": "Tweets de @elon",
+            "description": "Tweets de @elon",
+            "id": 2531008,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/elon"
+        },
+        {
+            "twitterUser": "b",
+            "name": "Tweets de @b",
+            "description": "Tweets de @b",
+            "id": 2531010,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/b"
+        },
+        {
+            "twitterUser": "g",
+            "name": "Tweets de @g",
+            "description": "Tweets de @g",
+            "id": 2531015,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/g"
+        },
+        {
+            "twitterUser": "h",
+            "name": "Tweets de @h",
+            "description": "Tweets de @h",
+            "id": 2531016,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/h"
+        },
+        {
+            "twitterUser": "i",
+            "name": "Tweets de @i",
+            "description": "Tweets de @i",
+            "id": 2531017,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/i"
+        },
+        {
+            "twitterUser": "j",
+            "name": "Tweets de @j",
+            "description": "Tweets de @j",
+            "id": 2531018,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/j"
+        },
+        {
+            "twitterUser": "k",
+            "name": "Tweets de @k",
+            "description": "Tweets de @k",
+            "id": 2531019,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/k"
+        },
+        {
+            "twitterUser": "l",
+            "name": "Tweets de @l",
+            "description": "Tweets de @l",
+            "id": 2531020,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/l"
+        },
+        {
+            "twitterUser": "o",
+            "name": "Tweets de @o",
+            "description": "Tweets de @o",
+            "id": 2531021,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/o"
+        },
+        {
+            "twitterUser": "p",
+            "name": "Tweets de @p",
+            "description": "Tweets de @p",
+            "id": 2531022,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/p"
+        },
+        {
+            "twitterUser": "hh",
+            "name": "Tweets de @hh",
+            "description": "Tweets de @hh",
+            "id": 2531023,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/hh"
+        },
+        {
+            "twitterUser": "f",
+            "name": "Tweets de @f",
+            "description": "Tweets de @f",
+            "id": 2531014,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/f"
+        },
+        {
+            "twitterUser": "a",
+            "name": "Tweets de @a",
+            "description": "Tweets de @a",
+            "id": 2531009,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/a"
+        },
+        {
+            "name": "Liens de https://blog.scoop.it",
+            "description": "Liens de https://blog.scoop.it",
+            "id": 2538001,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_FrontpageSource.png",
+            "type": "webpage",
+            "webpageUrl": "https://blog.scoop.it"
+        },
+        {
+            "name": "Libé sciences: https://www.liberation.fr/sciences/",
+            "description": "Liens de https://www.liberation.fr/sciences/",
+            "id": 2539659,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_FrontpageSource.png",
+            "type": "webpage",
+            "webpageUrl": "https://www.liberation.fr/sciences/"
+        },
+        {
+            "name": "Liens de https://www.centrepresseaveyron.fr/recherche?q=cr%C3%A9dit+agricole",
+            "description": "Liens de https://www.centrepresseaveyron.fr/recherche?q=cr%C3%A9dit+agricole",
+            "id": 2541011,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_FrontpageSource.png",
+            "type": "webpage",
+            "webpageUrl": "https://www.centrepresseaveyron.fr/recherche?q=cr%C3%A9dit+agricole"
+        },
+        {
+            "name": "Le Point - Actualité",
+            "description": "Actualité de la rubrique Actualité",
+            "id": 2488255,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_RSSSource.png",
+            "type": "rss",
+            "url": "https://www.lepoint.fr#xtor=RSS-221",
+            "rssUrl": "https://www.lepoint.fr/rss.xml"
+        },
+        {
+            "name": "Le Point - Politique",
+            "description": "Actualité de la rubrique Politique",
+            "id": 2488256,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_RSSSource.png",
+            "type": "rss",
+            "url": "https://www.lepoint.fr#xtor=RSS-288",
+            "rssUrl": "https://www.lepoint.fr/politique/rss.xml"
+        },
+        {
+            "name": "Le Point - Société",
+            "description": "Actualité de la rubrique Société",
+            "id": 2488258,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_RSSSource.png",
+            "type": "rss",
+            "url": "https://www.lepoint.fr#xtor=RSS-221",
+            "rssUrl": "https://www.lepoint.fr/societe/rss.xml"
+        },
+        {
+            "name": "Le Point - Médias",
+            "description": "Actualité de la rubrique Médias",
+            "id": 2488260,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_RSSSource.png",
+            "type": "rss",
+            "url": "https://www.lepoint.fr#xtor=RSS-221",
+            "rssUrl": "https://www.lepoint.fr/medias/rss.xml"
+        },
+        {
+            "name": "Le monde RSS.!! ",
+            "description": "Le Monde.fr - 1er site d’information. Les articles du journal et toute l’actualité en continu : International, France, Société, Economie, Culture, Environnement, Blogs ...",
+            "id": 2135124,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_RSSSource.png",
+            "type": "rss",
+            "url": "https://www.lemonde.fr/rss/une.xml",
+            "rssUrl": "https://www.lemonde.fr/rss/une.xml"
+        },
+        {
+            "twitterUser": "bluxte",
+            "name": "Tweets de @bluxte",
+            "description": "Tweets de @bluxte",
+            "id": 1938004,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterFollowUserSource.png",
+            "type": "twitter_follow_user",
+            "url": "http://twitter.com/bluxte"
+        },
+        {
+            "name": "Liens de https://www.scoop.it/yololesamis",
+            "description": "Liens de https://www.scoop.it/yololesamis",
+            "id": 2550003,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_FrontpageSource.png",
+            "type": "webpage",
+            "webpageUrl": "https://www.scoop.it/yololesamis"
+        }
+    ],
+    "success": true,
+    "serverTime": 1668444392583
+}
