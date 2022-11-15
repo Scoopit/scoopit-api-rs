@@ -1,6 +1,7 @@
 use std::{
     borrow::Cow,
     convert::{TryFrom, TryInto},
+    fmt::Debug,
     str::FromStr,
 };
 
@@ -141,7 +142,7 @@ impl Default for GetTopicRequest {
 }
 
 /// Represents a `GET` request.
-pub trait GetRequest: Serialize {
+pub trait GetRequest: Serialize + Debug {
     /// The type returned by the Scoop.it API.
     ///
     /// It must be converible to this trait Output type.
@@ -154,7 +155,7 @@ pub trait GetRequest: Serialize {
 
 /// A request that does an update, by default the body is serialized as
 /// `application/x-www-form-urlencoded` and the method is `POST`
-pub trait UpdateRequest: Serialize {
+pub trait UpdateRequest: Serialize + Debug {
     /// The type returned by the Scoop.it API.
     ///
     /// It must be convertible to this trait Output type.
@@ -460,7 +461,7 @@ impl TryFrom<LoginResponse> for LoginAccessToken {
 /// Get the list of available suggestion engines
 ///
 /// https://www.scoop.it/dev/api/1/urls#se
-#[derive(Default, Serialize)]
+#[derive(Debug, Default, Serialize)]
 pub struct GetSuggestionEnginesRequest {
     _dummy: (),
 }
