@@ -142,7 +142,7 @@ pub enum SourceTypeData {
     #[serde(rename_all = "camelCase")]
     Rss { rss_url: Url },
     #[serde(rename_all = "camelCase")]
-    TwitterSearch { query: String },
+    TwitterSearch { twitter_search_query: String },
     #[serde(rename_all = "camelCase")]
     TwitterList {
         twitter_list_name: String,

@@ -299,6 +299,15 @@
             "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_FrontpageSource.png",
             "type": "webpage",
             "webpageUrl": "https://www.scoop.it/yololesamis"
+        },
+        {
+            "twitterSearchQuery": "le monde",
+            "name": "le monde",
+            "description": "le monde",
+            "id": 2551001,
+            "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterSearchSource.png",
+            "type": "twitter_search",
+            "url": "https://twitter.com/search?q=le+monde&lang=fr"
         }
     ],
     "success": true,
