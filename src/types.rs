@@ -110,7 +110,7 @@ pub struct RecipientsList {
     pub emails: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum SuggestionEngineType {
     ResearchContent,
