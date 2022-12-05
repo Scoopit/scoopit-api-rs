@@ -163,3 +163,13 @@ pub struct Source {
     #[serde(flatten)]
     pub source_type_data: SourceTypeData,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct TopicGroup {
+    pub id: i64,
+    pub name: String,
+    pub url_name: String,
+    pub user_editable: bool,
+    pub topics: Vec<Topic>,
+}

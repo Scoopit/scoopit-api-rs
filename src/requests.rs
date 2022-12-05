@@ -12,7 +12,8 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use crate::{
     serde_qs,
     types::{
-        Post, RecipientsList, SearchResults, Source, SourceTypeData, SuggestionEngine, Topic, User,
+        Post, RecipientsList, SearchResults, Source, SourceTypeData, SuggestionEngine, Topic,
+        TopicGroup, User,
     },
 };
 
@@ -663,6 +664,120 @@ impl TryFrom<CreateSuggestionEngineSourceResponse> for Source {
         match value {
             CreateSuggestionEngineSourceResponse::Ok { source } => Ok(source),
             CreateSuggestionEngineSourceResponse::Err { error } => {
+                Err(anyhow!("Server returned an error: {error}"))
+            }
+        }
+    }
+}
+
+/// Get the data about a topic group
+///
+/// https://www.scoop.it/dev/api/1/urls#topicGroup
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct GetTopicGroupRequest {
+    pub url_name: String,
+    /// Some apps may be able to specify company id. (privileged apps)
+    pub company_id: Option<i64>,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(untagged)]
+pub enum GetTopicGroupResponse {
+    #[serde(rename_all = "camelCase")]
+    Ok {
+        topic_group: TopicGroup,
+    },
+    Err {
+        error: String,
+    },
+}
+
+impl GetRequest for GetTopicGroupRequest {
+    type Response = GetTopicGroupResponse;
+
+    type Output = TopicGroup;
+
+    fn endpoint(&self) -> Cow<'static, str> {
+        "topic-group".into()
+    }
+}
+
+impl TryFrom<GetTopicGroupResponse> for TopicGroup {
+    type Error = anyhow::Error;
+
+    fn try_from(value: GetTopicGroupResponse) -> Result<Self, Self::Error> {
+        match value {
+            GetTopicGroupResponse::Ok { topic_group } => Ok(topic_group),
+            GetTopicGroupResponse::Err { error } => {
+                Err(anyhow!("Server returned an error: {error}"))
+            }
+        }
+    }
+}
+
+/// Get the data about a topic group
+///
+/// https://www.scoop.it/dev/api/1/urls#compilation
+#[derive(Serialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct GetCompilationRequest {
+    ///  method used for sorting posts (GetCompilationSort::Rss if not specified)
+    pub sort: Option<GetCompilationSort>,
+    ///  a list of topic ids that will be used to create the compilation
+    pub topic_ids: Option<Vec<i64>>,
+    /// create the compilation from topics in this topic group
+    pub topic_group_id: Option<i64>,
+    /// no posts older than this timestamp will be returned (in millis from unix epoch)
+    pub since: Option<i64>,
+    ///maximum number of posts to return
+    pub count: Option<u32>,
+    /// page number of posts to retrieve
+    pub page: Option<u32>,
+    /// the maximum number of comments to retrieve for each returned post
+    pub ncomments: Option<u32>,
+    // return the list of tags for each returned post.
+    pub get_tags: Option<bool>,
+    /// return tags for topic of each returned post
+    pub get_tags_for_topic: Option<bool>,
+    /// return stats for topic of each returned post
+    pub get_stats_for_topic: Option<bool>,
+}
+
+#[derive(Serialize, Debug)]
+pub enum GetCompilationSort {
+    /// posts are ordered like in the RSS feed
+    #[serde(rename = "rss")]
+    Rss,
+    /// posts are ordered like in the "My followed scoops" tab in a scoop.it user profile
+    #[serde(rename = "timeline")]
+    Timeline,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase", untagged)]
+pub enum GetCompilationResponse {
+    Ok { posts: Vec<Post> },
+    Err { error: String },
+}
+
+impl GetRequest for GetCompilationRequest {
+    type Response = GetCompilationResponse;
+
+    type Output = Vec<Post>;
+
+    fn endpoint(&self) -> Cow<'static, str> {
+        "compilation".into()
+    }
+}
+
+impl TryFrom<GetCompilationResponse> for Vec<Post> {
+    type Error = anyhow::Error;
+
+    fn try_from(value: GetCompilationResponse) -> Result<Self, Self::Error> {
+        match value {
+            GetCompilationResponse::Ok { posts } => Ok(posts),
+            GetCompilationResponse::Err { error } => {
                 Err(anyhow!("Server returned an error: {error}"))
             }
         }

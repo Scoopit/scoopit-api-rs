@@ -1,6 +1,6 @@
 use scoopit_api::{
     types::Source, CreateSuggestionEngineSourceResponse, EmptyUpdateResponse,
-    GetSuggestionEngineSourcesResponse, GetSuggestionEnginesResponse,
+    GetSuggestionEngineSourcesResponse, GetSuggestionEnginesResponse, GetTopicGroupResponse,
 };
 
 #[test]
@@ -44,4 +44,10 @@ fn test_create_source() {
         "samples/create_source.json"
     ))
     .unwrap();
+}
+
+#[test]
+fn test_get_topic_group() {
+    serde_json::from_str::<GetTopicGroupResponse>(include_str!("samples/topic_group.json"))
+        .unwrap();
 }
