@@ -51,14 +51,22 @@ impl From<Inner> for Error {
     }
 }
 
+impl From<serde_json::Error> for Error {
+    fn from(e: serde_json::Error) -> Self {
+        Self { inner: e.into() }
+    }
+}
+
 #[derive(thiserror::Error, Debug)]
-enum Inner {
+pub(crate) enum Inner {
     #[error("Requested resource not found")]
     NotFound,
     #[error("Access to requested resource is forbidden")]
     Forbidden,
     #[error("An error occurred: {}", .0)]
     HttpClient(#[from] reqwest::Error),
+    #[error("Unable to deserialize response: {}", .0)]
+    SerdeError(#[from] serde_json::Error),
     #[error("An error occurred: {}", .0)]
     Other(#[from] anyhow::Error),
 }

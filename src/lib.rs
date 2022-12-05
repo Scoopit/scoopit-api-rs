@@ -133,7 +133,7 @@ impl ScoopitAPIClient {
         &self,
         request: RequestBuilder,
     ) -> Result<T, error::Error> {
-        Ok(request
+        let json = request
             .header(
                 header::AUTHORIZATION,
                 format!("Bearer {}", self.access_token.get_access_token().await?),
@@ -141,8 +141,10 @@ impl ScoopitAPIClient {
             .send()
             .await?
             .error_for_status()?
-            .json()
-            .await?)
+            .text()
+            .await?;
+        debug!("Received response {json}");
+        Ok(serde_json::from_str::<T>(&json)?)
     }
 
     /// Perform a `GET` request to scoop.it API.
