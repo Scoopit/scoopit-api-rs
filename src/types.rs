@@ -136,23 +136,37 @@ pub struct SuggestionEngineSavedSearch {
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum SourceTypeData {
     #[serde(rename_all = "camelCase")]
-    AdvancedSearch { query: String },
+    AdvancedSearch {
+        query: String,
+    },
     #[serde(rename_all = "camelCase")]
-    Webpage { webpage_url: Url },
+    Webpage {
+        webpage_url: Url,
+    },
     #[serde(rename_all = "camelCase")]
-    Rss { rss_url: Url },
+    Rss {
+        rss_url: Url,
+    },
     #[serde(rename_all = "camelCase")]
-    TwitterSearch { twitter_search_query: String },
+    TwitterSearch {
+        twitter_search_query: String,
+    },
     #[serde(rename_all = "camelCase")]
     TwitterList {
         twitter_list_name: String,
         twitter_list_owner: String,
     },
     #[serde(rename_all = "camelCase")]
-    TwitterFollowUser { twitter_user: String },
+    TwitterFollowUser {
+        twitter_user: String,
+    },
     /// Search is encoded in the url of the source (this seems to be a scoop.it export bug)
-    #[serde(rename_all = "camelCase")]
     YoutubeSearch,
+    /// url of the source is the facebook page
+    FacebookPage,
+    ScoopitUser,
+    /// (topic)
+    ScoopitTheme,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -162,7 +176,9 @@ pub struct Source {
     pub name: String,
     pub description: String,
     pub icon_url: Url,
-    pub url: Option<Url>,
+    /// in case of ScoopitUser & ScoopitTheme, the url is a relative url to https://www.scoop.it,
+    /// so we cannot enforce an Option<Url> here
+    pub url: Option<String>,
     #[serde(flatten)]
     pub source_type_data: SourceTypeData,
 }

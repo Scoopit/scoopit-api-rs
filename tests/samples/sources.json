@@ -316,6 +316,30 @@
             "iconUrl": "https://www.scoop.it/resources/img/V4/sources/icon_YoutubeSearchSource.png",
             "type": "youtube_search",
             "url": "http://www.youtube.com/results?search_query=videos+comptines"
+        },
+        {
+            "name": "Département des Pyrénées-Atlantiques's Facebook Wall",
+            "description": "Département des Pyrénées-Atlantiques's Facebook Wall",
+            "id": 356723963,
+            "iconUrl": "https://www.scoop.it/resources/img/V4/sources/icon_FacebookPage2Source.png",
+            "type": "facebook_page",
+            "url": "https://www.facebook.com/pages/D%C3%A9partement-des-Pyr%C3%A9n%C3%A9es-Atlantiques/720037604708106"
+        },
+        {
+            "name": "Scoops curated by Philippe Villette",
+            "description": "Scoops curated by Philippe Villette",
+            "id": 427430109,
+            "iconUrl": "https://www.scoop.it/resources/img/V4/sources/icon_ScoopItSearchSource.png",
+            "type": "scoopit_user",
+            "url": "/u/philippe-villette"
+        },
+        {
+            "name": "Scoops curated on Photography Gear News",
+            "description": "Scoops curated on Photography Gear News",
+            "id": 332550897,
+            "iconUrl": "https://www.scoop.it/resources/img/V4/sources/icon_ScoopItSearchSource.png",
+            "type": "scoopit_theme",
+            "url": "/topic/photo-tech-news-and-rumors"
         }
     ],
     "success": true,
