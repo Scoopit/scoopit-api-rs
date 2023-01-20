@@ -276,9 +276,20 @@ mod tests {
         SearchRequestType, TestRequest,
     };
 
+    use std::sync::Once;
+
+    static INIT: Once = Once::new();
+
+    /// Setup function that is only run once, even if called multiple times.
+    fn setup_logger() {
+        INIT.call_once(|| {
+            env_logger::init();
+        });
+    }
+
     async fn get_client() -> ScoopitAPIClient {
         let _ = dotenv::dotenv();
-        env_logger::init();
+        setup_logger();
         let client_id = std::env::var("SCOOPIT_CLIENT_ID").unwrap();
         let client_secret = std::env::var("SCOOPIT_CLIENT_SECRET").unwrap();
         ScoopitAPIClient::authenticate_with_client_credentials(

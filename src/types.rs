@@ -150,6 +150,9 @@ pub enum SourceTypeData {
     },
     #[serde(rename_all = "camelCase")]
     TwitterFollowUser { twitter_user: String },
+    /// Search is encoded in the url of the source (this seems to be a scoop.it export bug)
+    #[serde(rename_all = "camelCase")]
+    YoutubeSearch,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

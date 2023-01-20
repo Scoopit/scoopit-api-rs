@@ -308,6 +308,14 @@
             "iconUrl": "https://dev.gassmann.fr/resources/img/V4/sources/icon_TwitterSearchSource.png",
             "type": "twitter_search",
             "url": "https://twitter.com/search?q=le+monde&lang=fr"
+        },
+        {
+            "name": "Youtube search for videos comptines",
+            "description": "Results for Youtube search videos comptines",
+            "id": 36543517,
+            "iconUrl": "https://www.scoop.it/resources/img/V4/sources/icon_YoutubeSearchSource.png",
+            "type": "youtube_search",
+            "url": "http://www.youtube.com/results?search_query=videos+comptines"
         }
     ],
     "success": true,
