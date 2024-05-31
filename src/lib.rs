@@ -2,6 +2,7 @@
 //!
 //! The client uses `reqwest` with `rustls` to perform HTTP requests to www.scoop.it API.
 use anyhow::Context;
+use jsonwebtokens::raw::TokenSlices;
 use log::debug;
 use oauth::AccessTokenResponse;
 pub use requests::*;
@@ -251,14 +252,18 @@ impl TryFrom<AccessTokenResponse> for AccessToken {
             expires_in: _,
             refresh_token,
         } = r;
-        let decoded = jsonwebtoken::dangerous_insecure_decode::<Claims>(&access_token)?;
+        let exp = {
+            let TokenSlices { claims, .. } = jsonwebtokens::raw::split_token(&access_token)?;
+            let json_claims = jsonwebtokens::raw::decode_json_token_slice(claims)?;
+            serde_json::from_value::<Claims>(json_claims)?.exp
+        };
 
         Ok(Self::with_renew(
             access_token,
             refresh_token
                 .map::<anyhow::Result<AccessTokenRenew>, _>(|refresh_token| {
                     Ok(AccessTokenRenew {
-                        expires_at: decoded.claims.exp.ok_or(anyhow::anyhow!(
+                        expires_at: exp.ok_or(anyhow::anyhow!(
                             "Refresh token provided but access token does not expires!"
                         ))?,
                         refresh_token,
