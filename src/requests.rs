@@ -291,6 +291,8 @@ pub struct SearchRequest {
     pub get_tags_for_topic: bool,
     /// bool optional, default to true - returns or not stats for topic of each returned post. only for type="post"
     pub get_stats_for_topic: bool,
+    /// bool optional, default to false - also returns topics having no posts. only for type="topic"
+    pub include_empty_topics: bool,
 }
 impl Default for SearchRequest {
     fn default() -> Self {
@@ -306,6 +308,7 @@ impl Default for SearchRequest {
             get_stats: false,
             get_tags_for_topic: false,
             get_stats_for_topic: false,
+            include_empty_topics: false,
         }
     }
 }
