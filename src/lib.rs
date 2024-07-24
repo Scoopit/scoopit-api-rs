@@ -25,7 +25,7 @@ pub mod types;
 // vec=foo&vec=bar&vec=baz instead of regular serde_qs vec[1]=foo&vec[2]=bar&vec[3]=baz
 pub mod serde_qs;
 
-mod error;
+pub mod error;
 
 pub use access_token_store::AccessTokenStore;
 
