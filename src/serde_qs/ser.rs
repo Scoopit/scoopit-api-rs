@@ -52,7 +52,7 @@ pub struct QsSerializer<'a, W: 'a + Write> {
     first: &'a mut bool,
 }
 
-fn replace_space(input: &str) -> Cow<str> {
+fn replace_space(input: &str) -> Cow<'_, str> {
     match input.as_bytes().iter().position(|&b| b == b' ') {
         None => Cow::Borrowed(input),
         Some(first_position) => {

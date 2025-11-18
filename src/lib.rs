@@ -293,7 +293,7 @@ mod tests {
     }
 
     async fn get_client() -> ScoopitAPIClient {
-        let _ = dotenv::dotenv();
+        let _ = dotenvy::dotenv();
         setup_logger();
         let client_id = std::env::var("SCOOPIT_CLIENT_ID").unwrap();
         let client_secret = std::env::var("SCOOPIT_CLIENT_SECRET").unwrap();
