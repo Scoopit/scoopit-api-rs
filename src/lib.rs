@@ -333,7 +333,7 @@ mod tests {
         let topic = get_client()
             .await
             .get(GetTopicRequest {
-                url_name: Some("sports-and-performance-psychology".to_string()),
+                url_name: Some("best-of-photojournalism".to_string()),
                 ..Default::default()
             })
             .await
@@ -343,7 +343,7 @@ mod tests {
         let topic = get_client()
             .await
             .get(GetTopicRequest {
-                url_name: Some("sports-and-performance-psychology".to_string()),
+                url_name: Some("best-of-photojournalism".to_string()),
                 order: Some(GetTopicOrder::User),
                 ..Default::default()
             })

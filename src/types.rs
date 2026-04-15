@@ -41,6 +41,7 @@ pub struct Topic {
     pub curated_posts: Option<Vec<Post>>,
     pub tags: Option<Vec<TopicTag>>,
     pub stats: Option<Stats>,
+    pub is_private: bool,
 }
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
